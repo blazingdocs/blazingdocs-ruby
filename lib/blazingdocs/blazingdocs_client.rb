@@ -2,6 +2,9 @@ require 'net/https'
 require 'uri'
 require 'cgi'
 require 'json'
+require 'blazingdocs/utils/hash_utils'
+require 'blazingdocs/models/account'
+require 'blazingdocs/models/usage'
 
 module Blazingdocs
   class BlazingdocsClient
@@ -11,9 +14,32 @@ module Blazingdocs
       'Accept' => 'application/json'
     }
 
+    def initialize(api_key)
+      raise TypeError, 'api_key expects a string' unless api_key.kind_of?(String)
+
+      @configuration = Configuration.new
+      @configuration.api_key = api_key
+    end
+
+    def get_account
+      hash = get('/account')
+      Account.new(to_snake_keys(hash))
+    end
+
+    def get_usage
+      hash = get('/usage')
+      Usage.new(to_snake_keys(hash))
+    end
+
+    private
+
+    include Blazingdocs::Utils
+
+    attr_accessor :configuration
+
     def get(path, params = {}, options = {})
       handle_response do
-        headers = DEFAULT_HEADERS.merge({ API_KEY_HEADER => config.api_key })
+        headers = DEFAULT_HEADERS.merge({ API_KEY_HEADER => @configuration.api_key })
         request = Net::HTTP::Get.new(request_uri(path, params), headers)
 
         http(options).request(request)
@@ -27,7 +53,7 @@ module Blazingdocs
 
     def http(options = {})
       http = Net::HTTP.new(base_uri.host, base_uri.port)
-      http.open_timeout = config.connect_timeout
+      http.open_timeout = @configuration.connect_timeout
       http.use_ssl = base_uri.scheme == 'https'
       # http.set_debug_output $stderr
       http
@@ -39,11 +65,7 @@ module Blazingdocs
     end
 
     def base_uri
-      config.base_uri
-    end
-
-    def config
-      Blazingdocs.config
+      @configuration.base_uri
     end
   end
 end

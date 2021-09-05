@@ -13,15 +13,7 @@ module Blazingdocs
     @config ||= Configuration.new
   end
 
-  def get_account
-    client.get('/account')
-  end
-
-  def get_usage
-    client.get('/usage')
-  end
-
-  def client
-    Thread.current[:blazingdocs_client] ||= BlazingdocsClient.new
+  def create_client(api_key)
+    BlazingdocsClient.new(api_key)
   end
 end
