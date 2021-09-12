@@ -1,6 +1,6 @@
 require 'uri'
 
-module Blazingdocs
+module BlazingDocs
   class Configuration
     attr_accessor :api_key
     attr_accessor :base_uri

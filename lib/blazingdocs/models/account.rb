@@ -1,4 +1,4 @@
-module Blazingdocs
+module BlazingDocs
   class Account
     attr_accessor :id
     attr_accessor :plan

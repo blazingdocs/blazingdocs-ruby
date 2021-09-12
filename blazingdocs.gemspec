@@ -5,7 +5,7 @@ require 'blazingdocs/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'blazingdocs'
-  spec.version       = Blazingdocs::VERSION
+  spec.version       = BlazingDocs::VERSION
   spec.authors       = ['Mentalstack']
   spec.email         = ['hello@blazingdocs.com']
 

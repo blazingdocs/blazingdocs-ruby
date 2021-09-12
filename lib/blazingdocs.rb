@@ -1,8 +1,8 @@
 require 'blazingdocs/version'
 require 'blazingdocs/configuration'
-require 'blazingdocs/blazingdocs_client'
+require 'blazingdocs/blazing_client'
 
-module Blazingdocs
+module BlazingDocs
   module_function
 
   def configure
@@ -14,6 +14,6 @@ module Blazingdocs
   end
 
   def create_client(api_key)
-    BlazingdocsClient.new(api_key)
+    BlazingClient.new(api_key)
   end
 end

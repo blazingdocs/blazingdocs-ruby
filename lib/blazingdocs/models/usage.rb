@@ -1,4 +1,4 @@
-module Blazingdocs
+module BlazingDocs
   class Usage
     attr_accessor :quota
     attr_accessor :page_count
