@@ -17,7 +17,7 @@ module BlazingDocs
       when Array
         value.map { |v| to_camel_keys(v) }
       when Hash
-        snake_hash(value)
+        camel_hash(value)
       else
         value
       end

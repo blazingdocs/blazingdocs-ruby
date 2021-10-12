@@ -2,6 +2,7 @@ require 'net/https'
 require 'uri'
 require 'cgi'
 require 'json'
+require 'net/http/post/multipart'
 require 'blazingdocs/utils/hash_utils'
 require 'blazingdocs/models/account'
 require 'blazingdocs/models/usage'
@@ -34,23 +35,23 @@ module BlazingDocs
     end
 
     def merge(data, file_name, merge_parameters, template)
-      form_data = []
+      form_data = {}
 
       raise ArgumentError, 'data is not provided' if data.nil?
       raise ArgumentError, 'data expects a string' unless data.kind_of?(String)
 
-      form_data.push(['Data', data])
+      form_data['Data'] = data
 
       raise ArgumentError, 'file_name is not provided' if file_name.nil?
 
-      form_data.push(['OutputName', file_name])
+      form_data['OutputName'] = file_name
 
       raise ArgumentError, 'merge_parameters is not provided' if merge_parameters.nil?
 
       if merge_parameters.is_a?(Hash)
-        form_data.push(['MergeParameters', to_camel_keys(merge_parameters).to_json])
+        form_data['MergeParameters'] = to_camel_keys(merge_parameters).to_json
       elsif merge_parameters.is_a?(BlazingDocs::MergeParameters)
-        form_data.push(['MergeParameters', to_camel_keys(to_hash(merge_parameters)).to_json])
+        form_data['MergeParameters'] = to_camel_keys(to_hash(merge_parameters)).to_json
       else
         raise ArgumentError, 'merge_parameters expects Hash or MergeParameters'
       end
@@ -58,12 +59,12 @@ module BlazingDocs
       raise ArgumentError, 'template is not provided' if template.nil?
 
       if template.is_a?(File)
-        form_data.push(['Template', template.read])
+        form_data['Template'] = UploadIO.new(template, 'application/octet-stream', File.basename(template))
       elsif template.is_a?(String)
-        form_data.push(['Template', template])
+        form_data['Template'] = template
       end
 
-      post('/operation/merge', form_data)
+      multipart_post('/operation/merge', form_data)
     end
 
     private
@@ -83,9 +84,19 @@ module BlazingDocs
 
     def post(path, form_data, options = {})
       handle_response do
+        uri = request_uri(path)
         headers = DEFAULT_HEADERS.merge({ API_KEY_HEADER => @configuration.api_key })
-        request = Net::HTTP::Post.new(request_uri(path), headers)
-        request.set_form(form_data, 'multipart/form-data')
+        request = Net::HTTP::Post.new(uri, headers)
+        request.set_form(form_data)
+
+        http(options).request(request)
+      end
+    end
+
+    def multipart_post(path, form_data, options = {})
+      handle_response do
+        headers = DEFAULT_HEADERS.merge({ API_KEY_HEADER => @configuration.api_key })
+        request = Net::HTTP::Post::Multipart.new(path, form_data, headers)
 
         http(options).request(request)
       end

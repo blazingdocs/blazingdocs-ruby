@@ -1,0 +1,12 @@
+GEM
+  specs:
+    multipart-post (2.1.1)
+
+PLATFORMS
+  x64-mingw32
+
+DEPENDENCIES
+  multipart-post
+
+BUNDLED WITH
+   2.2.22
