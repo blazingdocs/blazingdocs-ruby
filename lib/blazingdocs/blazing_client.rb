@@ -4,8 +4,9 @@ require 'cgi'
 require 'json'
 require 'net/http/post/multipart'
 require 'blazingdocs/utils/hash_utils'
-require 'blazingdocs/models/account'
-require 'blazingdocs/models/usage'
+require 'blazingdocs/models/account_model'
+require 'blazingdocs/models/usage_model'
+require 'blazingdocs/models/operation_model'
 require 'blazingdocs/models/merge_parameters'
 require 'blazingdocs/errors/blazing_error'
 
@@ -26,12 +27,12 @@ module BlazingDocs
 
     def get_account
       hash = get('/account')
-      Account.new(to_snake_keys(hash))
+      AccountModel.new(to_snake_keys(hash))
     end
 
     def get_usage
       hash = get('/usage')
-      Usage.new(to_snake_keys(hash))
+      UsageModel.new(to_snake_keys(hash))
     end
 
     def merge(data, file_name, merge_parameters, template)
@@ -64,7 +65,8 @@ module BlazingDocs
         form_data['Template'] = template
       end
 
-      multipart_post('/operation/merge', form_data)
+      hash = multipart_post('/operation/merge', form_data)
+      OperationModel.new(to_snake_keys(hash))
     end
 
     private

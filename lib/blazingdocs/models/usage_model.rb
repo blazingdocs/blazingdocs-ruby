@@ -1,5 +1,5 @@
 module BlazingDocs
-  class Usage
+  class UsageModel
     attr_accessor :quota
     attr_accessor :page_count
     attr_accessor :usage

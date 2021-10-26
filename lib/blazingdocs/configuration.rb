@@ -3,10 +3,11 @@ require 'uri'
 module BlazingDocs
   class Configuration
     attr_accessor :api_key
-    attr_accessor :base_uri
     attr_accessor :connect_timeout
     attr_accessor :upload_timeout
     attr_accessor :download_timeout
+
+    attr_reader :base_uri
 
     def initialize
       @base_uri = URI('https://api.blazingdocs.com')
