@@ -1,7 +1,8 @@
-require 'open-uri'
+require 'date'
+require 'blazingdocs/models/base_model'
 
 module BlazingDocs
-  class FileModel
+  class FileModel < BaseModel
     attr_accessor :id
     attr_accessor :name
     attr_accessor :content_type
@@ -11,12 +12,6 @@ module BlazingDocs
     attr_reader :created_at
     attr_reader :last_modified_at
     attr_reader :last_accessed_at
-
-    def initialize(hash = {})
-      hash.each do |option, value|
-        self.send("#{option}=", value)
-      end
-    end
 
     def created_at=(created_at_str)
       @created_at = DateTime.iso8601(created_at_str)
@@ -36,15 +31,6 @@ module BlazingDocs
                           else
                             nil
                           end
-    end
-
-    def save_to_file(path)
-      path = File.join(path, @name) if File.directory?(path)
-      OpenURI::open_uri(@download_url) do |read_file|
-        IO.copy_stream(read_file, path, @length)
-      end
-
-      path
     end
   end
 end

@@ -6,6 +6,7 @@ require 'net/http/post/multipart'
 require 'blazingdocs/utils/hash_utils'
 require 'blazingdocs/models/account_model'
 require 'blazingdocs/models/usage_model'
+require 'blazingdocs/models/template_model'
 require 'blazingdocs/models/operation_model'
 require 'blazingdocs/models/merge_parameters'
 require 'blazingdocs/errors/blazing_error'
@@ -28,6 +29,11 @@ module BlazingDocs
     def get_account
       hash = get('/account')
       AccountModel.new(to_snake_keys(hash))
+    end
+
+    def get_templates(path = nil)
+      hashes = get("/templates/#{path or ''}")
+      hashes.map { |hash| TemplateModel.new(to_snake_keys(hash)) }
     end
 
     def get_usage
@@ -79,17 +85,6 @@ module BlazingDocs
       handle_response do
         headers = DEFAULT_HEADERS.merge({ API_KEY_HEADER => @configuration.api_key })
         request = Net::HTTP::Get.new(request_uri(path, params), headers)
-
-        http(options).request(request)
-      end
-    end
-
-    def post(path, form_data, options = {})
-      handle_response do
-        uri = request_uri(path)
-        headers = DEFAULT_HEADERS.merge({ API_KEY_HEADER => @configuration.api_key })
-        request = Net::HTTP::Post.new(uri, headers)
-        request.set_form(form_data)
 
         http(options).request(request)
       end

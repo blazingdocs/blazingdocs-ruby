@@ -1,11 +1,7 @@
-module BlazingDocs
-  class OperationTypeModel
-    attr_accessor :name
+require 'blazingdocs/models/base_model'
 
-    def initialize(hash = {})
-      hash.each do |option, value|
-        self.send("#{option}=", value)
-      end
-    end
+module BlazingDocs
+  class OperationTypeModel < BaseModel
+    attr_accessor :name
   end
 end

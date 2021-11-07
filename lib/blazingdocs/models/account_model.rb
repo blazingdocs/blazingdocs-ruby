@@ -1,7 +1,9 @@
+require 'date'
+require 'blazingdocs/models/base_model'
 require 'blazingdocs/models/plan_model'
 
 module BlazingDocs
-  class AccountModel
+  class AccountModel < BaseModel
     attr_accessor :id
     attr_accessor :api_key
     attr_accessor :obsolete_api_key
@@ -12,13 +14,6 @@ module BlazingDocs
     attr_reader :created_at
     attr_reader :last_synced_at
     attr_reader :updated_at
-
-
-    def initialize(hash = {})
-      hash.each do |option, value|
-        self.send("#{option}=", value)
-      end
-    end
 
     def plan=(plan_hash)
       @plan = PlanModel.new(plan_hash)
