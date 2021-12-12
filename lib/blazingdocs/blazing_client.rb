@@ -19,10 +19,10 @@ module BlazingDocs
       'Accept' => 'application/json'
     }
 
-    def initialize(api_key)
+    def initialize(api_key, config)
       raise TypeError, 'api_key expects a string' unless api_key.kind_of?(String)
 
-      @configuration = Configuration.new
+      @configuration = config.nil? ? Configuration.new : config.clone
       @configuration.api_key = api_key
     end
 
@@ -65,13 +65,15 @@ module BlazingDocs
 
       raise ArgumentError, 'template is not provided' if template.nil?
 
+      options = default_options
       if template.is_a?(File)
         form_data['Template'] = UploadIO.new(template, 'application/octet-stream', File.basename(template))
+        options = upload_options
       elsif template.is_a?(String)
         form_data['Template'] = template
       end
 
-      hash = multipart_post('/operation/merge', form_data)
+      hash = multipart_post('/operation/merge', form_data, options)
       OperationModel.new(to_snake_keys(hash))
     end
 
@@ -116,8 +118,11 @@ module BlazingDocs
     end
 
     def http(options = {})
+      options = default_options if options.empty?
+
       http = Net::HTTP.new(base_uri.host, base_uri.port)
-      http.open_timeout = @configuration.connect_timeout
+      http.open_timeout = options.fetch(:open_timeout)
+      http.read_timeout = options.fetch(:read_timeout)
       http.use_ssl = base_uri.scheme == 'https'
       # http.set_debug_output $stderr
       http
@@ -130,6 +135,18 @@ module BlazingDocs
 
     def base_uri
       @configuration.base_uri
+    end
+
+    def default_options
+      options = { read_timeout: @configuration.read_timeout }
+      options[:open_timeout] = @configuration.connect_timeout if RUBY_VERSION > '2.2.0'
+      options
+    end
+
+    def upload_options
+      options = default_options
+      options[:read_timeout] = @configuration.upload_timeout
+      options
     end
   end
 end

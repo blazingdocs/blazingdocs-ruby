@@ -14,6 +14,6 @@ module BlazingDocs
   end
 
   def create_client(api_key)
-    BlazingClient.new(api_key)
+    BlazingClient.new(api_key, config)
   end
 end
