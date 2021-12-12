@@ -12,7 +12,7 @@ module BlazingDocs
     attr_accessor :data_source_type
     attr_accessor :strict
 
-    def initialize(sequence, data_source_type, strict, data_source_name = 'data', parse_columns = false)
+    def initialize(sequence = false, data_source_type = 'json', strict = false, data_source_name = 'data', parse_columns = false)
       @data_source_name = data_source_name
 
       if !!sequence == sequence

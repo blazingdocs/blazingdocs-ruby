@@ -43,11 +43,10 @@ usage = client.get_usage
 data = File.open('PO-Template.json').read
 template = File.open('PO-Template.docx')
 
-merge_parameters = BlazingDocs::MergeParameters.new(
-  false, # data is object: sequence = false
-  'json', # data in json format
-  true # keep json types: strict = true
-) 
+merge_parameters = BlazingDocs::MergeParameters.new
+merge_parameters.sequence = false # data is object
+merge_parameters.data_source_type = 'json' # data in json format
+merge_parameters.strict = true # keep json types
 
 merge_result = client.merge(data, 'output.pdf', merge_parameters, template)
 ```
