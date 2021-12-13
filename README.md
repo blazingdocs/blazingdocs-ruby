@@ -1,4 +1,4 @@
-# BlazingDocs C#, .NET client
+# BlazingDocs Ruby client
 High-performance document generation API. Generate documents and reports from СSV, JSON, XML with 99,9% uptime and 24/7 monitoring.
 
 ## Installation
