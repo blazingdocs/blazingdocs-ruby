@@ -8,7 +8,7 @@ require 'blazingdocs/models/account_model'
 require 'blazingdocs/models/usage_model'
 require 'blazingdocs/models/template_model'
 require 'blazingdocs/models/operation_model'
-require 'blazingdocs/models/merge_parameters'
+require 'blazingdocs/parameters/merge_parameters'
 require 'blazingdocs/errors/blazing_error'
 
 module BlazingDocs
