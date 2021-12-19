@@ -21,9 +21,15 @@ Gem::Specification.new do |spec|
     "source_code_uri"   => "https://github.com/blazingdocs/blazingdocs-ruby"
   }
 
-  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features|examples|templates)/})
-  end
+  ignored = Regexp.union(
+    /\.editorconfig/,
+    /\.git/,
+    /\.vscode/,
+    /^test/,
+    /^examples/,
+    /^templates/
+  )
+  spec.files = `git ls-files`.split("\n").reject { |f| ignored.match(f) }
 
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
