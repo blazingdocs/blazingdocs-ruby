@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
     "homepage_uri"      => spec.homepage,
     "source_code_uri"   => "https://github.com/blazingdocs/blazingdocs-ruby"
   }
+  spec.required_ruby_version = '>= 2.3.0'
 
   ignored = Regexp.union(
     /\.editorconfig/,

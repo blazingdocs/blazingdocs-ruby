@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'net/https'
 require 'uri'
 require 'cgi'
@@ -17,10 +19,10 @@ module BlazingDocs
 
     DEFAULT_HEADERS ||= {
       'Accept' => 'application/json'
-    }
+    }.freeze
 
     def initialize(api_key, config)
-      raise TypeError, 'api_key expects a string' unless api_key.kind_of?(String)
+      raise TypeError, 'API Key expected to be a string' unless api_key.kind_of?(String)
 
       @configuration = config.nil? ? Configuration.new : config.clone
       @configuration.api_key = api_key
@@ -44,26 +46,26 @@ module BlazingDocs
     def merge(data, file_name, merge_parameters, template)
       form_data = {}
 
-      raise ArgumentError, 'data is not provided' if data.nil?
-      raise ArgumentError, 'data expects a string' unless data.kind_of?(String)
+      raise ArgumentError, 'Data is not provided' if data.nil?
+      raise ArgumentError, 'Data expected to be a string' unless data.kind_of?(String)
 
       form_data['Data'] = data
 
-      raise ArgumentError, 'file_name is not provided' if file_name.nil?
+      raise ArgumentError, 'Output filename is not provided' if file_name.nil?
 
       form_data['OutputName'] = file_name
 
-      raise ArgumentError, 'merge_parameters is not provided' if merge_parameters.nil?
+      raise ArgumentError, 'Merge parameters are not provided' if merge_parameters.nil?
 
       if merge_parameters.is_a?(Hash)
         form_data['MergeParameters'] = to_camel_keys(merge_parameters).to_json
       elsif merge_parameters.is_a?(BlazingDocs::MergeParameters)
         form_data['MergeParameters'] = to_camel_keys(to_hash(merge_parameters)).to_json
       else
-        raise ArgumentError, 'merge_parameters expects Hash or MergeParameters'
+        raise ArgumentError, 'Merge parameters expected to be a Hash or MergeParameters'
       end
 
-      raise ArgumentError, 'template is not provided' if template.nil?
+      raise ArgumentError, 'Template is not provided' if template.nil?
 
       options = default_options
       if template.is_a?(File)
@@ -124,13 +126,12 @@ module BlazingDocs
       http.open_timeout = options.fetch(:open_timeout)
       http.read_timeout = options.fetch(:read_timeout)
       http.use_ssl = base_uri.scheme == 'https'
-      # http.set_debug_output $stderr
       http
     end
 
     def request_uri(path, params = {})
       query = URI.encode_www_form(params)
-      base_uri.path + path + '?' + query
+      "#{base_uri.path}#{path}?#{query}"
     end
 
     def base_uri
